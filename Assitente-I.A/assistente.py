@@ -59,3 +59,90 @@ with st.sidebar:
     st.markdown("Acesse meu linkedin: www.linkedin.com/in/joao-lucas-devsql")
 
 # Aqui acabou o sidebar, agora vamos para parte principal do site
+st.title("Assistente de I.A - Aprendizado em python")
+
+#Adicionando um texto auxiliar
+st.caption("Digite sua pergunta ou dúvida para a I.A")
+
+
+#Iniciando o histórico de perguntas e respostas
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+#Mostrando o histórico de perguntas e respostas
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+    # Assim criamos um histórico de perguntas e respostas
+
+#Criando uma variavel cliente
+client = None #None significa vazio, não tem cliente ainda conectado
+
+#Criando um if para garantir que a chave da API foi inserida corretamente
+
+if groq_api_key:
+    try:
+        #Criando o cliente groq com a chave da API fornecida
+        client = Groq(api_key = groq_api_key)
+
+    except Exception as e:
+        #Exibindo erro caso não tenha chave da API ou seja a chave seja invalida
+        st.sidebar.error(f"erro ao inicializar o cliente Groq: {e}")
+        st.stop() # para a exeução do código
+
+# Caso não tenha chave, mas já existam mensagens, mostrar aviso
+elif st.session_state.messages:
+    st.waring("Por favor, insira sua chave da API Groq para continuar a conversa.")
+
+
+    # Caixa de texto do chat na página principal (fora de condicionais restritivas)
+if prompt := st.chat_input("Qual sua dúvida sobre python"):
+
+    # Se não houver cliente válido, mostrar aviso
+    if not client:
+        st.warning("Por favor, insira sua chave da API Groq para continuar")
+        st.stop()
+
+    # Armazena a mensagem do usuário no estado da sessão
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+    # Exibe a mensagem do usuário no chat
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # Preparando a mensagem para enviar a API
+    messages_for_api = [{"role": "system", "content": CUSTOM_PROMPT}] 
+    for msg in st.session_state.messages:
+        messages_for_api.append(msg)
+
+    # Criando a resposta do assistente no chat
+    with st.chat_message("assistant"):
+        with st.spinner("Analisando sua pergunta.."):
+            try:
+                # Chama a API da Groq para gerar resposta
+                chat_completion = client.chat.completions.create(
+                    messages=messages_for_api,
+                    model="openai/gpt-oss-120b",
+                    temperature=0.7,
+                    max_tokens=2048,
+                )
+
+                # Extrai a resposta gerada pela I.A
+                dsa_ai_resposta = chat_completion.choices[0].message.content
+
+                # Mostrando a resposta na tela
+                st.markdown(dsa_ai_resposta)
+
+                # Armazena a resposta do assistente no estado da sessão
+                st.session_state.messages.append({"role": "assistant", "content": dsa_ai_resposta})
+
+            except Exception as e:
+                st.error(f"Ocorreu um erro ao se comunicar com API da Groq: {e}")
+
+st.markdown("""
+            <div style="position: fixed; bottom: 0; width: 100%; text-align: center; background-color: #f1f1f1; padding: 10px;">
+                <p style="margin: 0;">Desenvolvido por João Lucas - 2024</p>
+            </div>
+            """, unsafe_allow_html=True
+    ) 
