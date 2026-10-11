@@ -44,3 +44,18 @@ with st.sidebar:
     #Mostrar um texto explicativo sobre o site
     st.markdown("Um assistente de I.A focado ajudar iniciantes a aprender programação na linguagem python.")
 
+
+    # Campo para inserir a chave da API Groq, dessa maneira se conectando a api e assim ao llm
+    groq_api_key = st.text_input("Insira sua chave da API groq:", type = "password",
+                                 help = "Para obter uma chave da API groq acesse: https://groq.com/")
+    #Adicionando explicações extras e linhas na barra lateral
+    st.markdown("----")
+    st.markdown("Desenvolvido para auxiliar você no seu aprendizado em prgramação python -- I.A pode cometer erros, não substitua o estudo e a prática, use como apoio e aprendizado.")
+
+    st.markdown("----")
+    st.markdown("**Acesse o meu repositório no GitHub:https://github.com/joaolucas2007/Python-Aprendizado**")
+
+    st.markdown("----")
+    st.markdown("Acesse meu linkedin: www.linkedin.com/in/joao-lucas-devsql")
+
+# Aqui acabou o sidebar, agora vamos para parte principal do site
