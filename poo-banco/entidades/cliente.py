@@ -11,7 +11,7 @@ class Cliente:    # Criando a classe clientes
 
         # Criando o metodo str que define como vai ser a representação em string do mobjeto
     def __str__(self):
-        print(f"Cliente: {self.nome} \n CPF: {self.cpf}")  # ao comando para imprimir algum objeto da classe cliente, será mostrado dessa forma
+        return (f"Cliente: {self.nome} \n CPF: {self.cpf}")  # ao comando para imprimir algum objeto da classe cliente, será mostrado dessa forma
 
 
 
